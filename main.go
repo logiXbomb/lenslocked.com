@@ -1,7 +1,16 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"net/http"
+)
+
+func handlerFunc(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprint(w, "<h1>Waffles are great!!</h1>")
+}
 
 func main() {
-	fmt.Println("vim-go")
+	http.HandleFunc("/", handlerFunc)
+
+	http.ListenAndServe(":3000", nil)
 }
