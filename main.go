@@ -4,20 +4,20 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/gorilla/mux"
+	"github.com/julienschmidt/httprouter"
 )
 
-func home(w http.ResponseWriter, r *http.Request) {
+func home(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	w.Header().Set("Content-Type", "text/html")
 	fmt.Fprint(w, "<h1>Waffles are great!!</h1>")
 }
 
-func contact(w http.ResponseWriter, r *http.Request) {
+func contact(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	w.Header().Set("Content-Type", "text/html")
 	fmt.Fprint(w, "To get in touch, please get in touch <a href=\"mailto:support@test.com\">Support</a>.")
 }
 
-func faq(w http.ResponseWriter, r *http.Request) {
+func faq(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	w.Header().Set("Content-Type", "text/html")
 	fmt.Fprint(w, "<h2>What's going on?</h2>")
 }
@@ -25,17 +25,19 @@ func faq(w http.ResponseWriter, r *http.Request) {
 func notFound(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
 
+	w.WriteHeader(http.StatusNotFound)
+
 	fmt.Fprint(w, "Oops... you didn't something wrong")
 }
 
 func main() {
-	r := mux.NewRouter()
+	r := httprouter.New()
 
-	r.HandleFunc("/", home)
-	r.HandleFunc("/contact", contact)
-	r.HandleFunc("/faq", faq)
+	r.GET("/", home)
+	r.GET("/contact", contact)
+	r.GET("/faq", faq)
 
-	r.NotFoundHandler = http.HandlerFunc(notFound)
+	r.NotFound = http.HandlerFunc(notFound)
 
 	http.ListenAndServe(":3000", r)
 }

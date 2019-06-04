@@ -1,0 +1,7 @@
+<h1>Hello, {{ .Name }}</h1>
+<h2>What is great? -- {{ .Count }} {{ .Great }}</h2>
+<ul>
+{{ range .Things }}
+  <li>{{ . }}</li>
+{{ end }}
+</ul>
