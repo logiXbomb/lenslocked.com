@@ -2,19 +2,29 @@ package main
 
 import (
 	"fmt"
+	"html/template"
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
 )
 
+var (
+	homeTemplate    *template.Template
+	contactTemplate *template.Template
+)
+
 func home(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	w.Header().Set("Content-Type", "text/html")
-	fmt.Fprint(w, "<h1>Waffles are great!!</h1>")
+	if err := homeTemplate.Execute(w, nil); err != nil {
+		panic(err)
+	}
 }
 
 func contact(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	w.Header().Set("Content-Type", "text/html")
-	fmt.Fprint(w, "To get in touch, please get in touch <a href=\"mailto:support@test.com\">Support</a>.")
+	if err := contactTemplate.Execute(w, nil); err != nil {
+		panic(err)
+	}
 }
 
 func faq(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
@@ -31,6 +41,18 @@ func notFound(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	var err error
+
+	homeTemplate, err = template.ParseFiles("views/home.tmpl")
+	if err != nil {
+		panic(err)
+	}
+
+	contactTemplate, err = template.ParseFiles("views/contact.tmpl")
+	if err != nil {
+		panic(err)
+	}
+
 	r := httprouter.New()
 
 	r.GET("/", home)
