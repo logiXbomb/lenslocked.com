@@ -43,12 +43,18 @@ func notFound(w http.ResponseWriter, r *http.Request) {
 func main() {
 	var err error
 
-	homeTemplate, err = template.ParseFiles("views/home.tmpl")
+	homeTemplate, err = template.ParseFiles(
+		"views/home.tmpl",
+		"views/layouts/footer.tmpl",
+	)
 	if err != nil {
 		panic(err)
 	}
 
-	contactTemplate, err = template.ParseFiles("views/contact.tmpl")
+	contactTemplate, err = template.ParseFiles(
+		"views/contact.tmpl",
+		"views/layouts/footer.tmpl",
+	)
 	if err != nil {
 		panic(err)
 	}
