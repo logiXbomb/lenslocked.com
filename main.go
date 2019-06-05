@@ -2,32 +2,32 @@ package main
 
 import (
 	"fmt"
-	"html/template"
 	"net/http"
 
-	"github.com/julienschmidt/httprouter"
+	"github.com/gorilla/mux"
+	"github.com/logiXbomb/lenslocked.com/views"
 )
 
 var (
-	homeTemplate    *template.Template
-	contactTemplate *template.Template
+	homeView    *views.View
+	contactView *views.View
 )
 
-func home(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+func home(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
-	if err := homeTemplate.Execute(w, nil); err != nil {
+	if err := homeView.Template.Execute(w, nil); err != nil {
 		panic(err)
 	}
 }
 
-func contact(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+func contact(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
-	if err := contactTemplate.Execute(w, nil); err != nil {
+	if err := contactView.Template.Execute(w, nil); err != nil {
 		panic(err)
 	}
 }
 
-func faq(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+func faq(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
 	fmt.Fprint(w, "<h2>What's going on?</h2>")
 }
@@ -41,31 +41,16 @@ func notFound(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	var err error
+	homeView = views.NewView("views/home.tmpl")
+	contactView = views.NewView("views/contact.tmpl")
 
-	homeTemplate, err = template.ParseFiles(
-		"views/home.tmpl",
-		"views/layouts/footer.tmpl",
-	)
-	if err != nil {
-		panic(err)
-	}
+	r := mux.NewRouter()
 
-	contactTemplate, err = template.ParseFiles(
-		"views/contact.tmpl",
-		"views/layouts/footer.tmpl",
-	)
-	if err != nil {
-		panic(err)
-	}
+	r.HandleFunc("/", home)
+	r.HandleFunc("/contact", contact)
+	r.HandleFunc("/faq", faq)
 
-	r := httprouter.New()
-
-	r.GET("/", home)
-	r.GET("/contact", contact)
-	r.GET("/faq", faq)
-
-	r.NotFound = http.HandlerFunc(notFound)
+	r.NotFoundHandler = http.HandlerFunc(notFound)
 
 	http.ListenAndServe(":3000", r)
 }
