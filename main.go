@@ -15,14 +15,14 @@ var (
 
 func home(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
-	if err := homeView.Template.Execute(w, nil); err != nil {
+	if err := homeView.Template.ExecuteTemplate(w, homeView.Layout, nil); err != nil {
 		panic(err)
 	}
 }
 
 func contact(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
-	if err := contactView.Template.Execute(w, nil); err != nil {
+	if err := contactView.Template.ExecuteTemplate(w, contactView.Layout, nil); err != nil {
 		panic(err)
 	}
 }
@@ -41,8 +41,8 @@ func notFound(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	homeView = views.NewView("views/home.tmpl")
-	contactView = views.NewView("views/contact.tmpl")
+	homeView = views.NewView("bootstrap", "views/home.tmpl")
+	contactView = views.NewView("bootstrap", "views/contact.tmpl")
 
 	r := mux.NewRouter()
 
