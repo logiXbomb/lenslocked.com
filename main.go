@@ -43,10 +43,11 @@ func main() {
 
 	r := mux.NewRouter()
 
-	r.HandleFunc("/", home)
-	r.HandleFunc("/contact", contact)
-	r.HandleFunc("/signup", usersC.New)
-	r.HandleFunc("/faq", faq)
+	r.HandleFunc("/", home).Methods(http.MethodGet)
+	r.HandleFunc("/contact", contact).Methods(http.MethodGet)
+	r.HandleFunc("/signup", usersC.New).Methods(http.MethodGet)
+	r.HandleFunc("/signup", usersC.Create).Methods(http.MethodPost)
+	r.HandleFunc("/faq", faq).Methods(http.MethodGet)
 
 	r.NotFoundHandler = http.HandlerFunc(notFound)
 

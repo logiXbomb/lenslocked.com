@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
@@ -21,4 +22,8 @@ func (u *Users) New(w http.ResponseWriter, r *http.Request) {
 	if err := u.NewView.Render(w, nil); err != nil {
 		log.Fatalf("-- could not render new users view: %v", err)
 	}
+}
+
+func (u *Users) Create(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprint(w, "This is a temporary response")
 }
