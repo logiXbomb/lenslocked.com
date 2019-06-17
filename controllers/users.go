@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/gorilla/schema"
 	"github.com/logiXbomb/lenslocked.com/views"
 )
 
@@ -24,10 +25,22 @@ func (u *Users) New(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+type SignupForm struct {
+	Email    string `schema:"email"`
+	Password string `schema:"password"`
+}
+
 func (u *Users) Create(w http.ResponseWriter, r *http.Request) {
 	if err := r.ParseForm(); err != nil {
 		log.Fatalf("-- could not parse create users form: %v", err)
 	}
 
-	fmt.Fprintf(w, "Got email of: %v", r.PostFormValue("email"))
+	dec := schema.NewDecoder()
+
+	var form SignupForm
+	if err := dec.Decode(&form, r.PostForm); err != nil {
+		log.Fatalf("-- could not decode create users form: %v", err)
+	}
+
+	fmt.Fprint(w, form)
 }
