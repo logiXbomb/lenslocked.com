@@ -25,5 +25,9 @@ func (u *Users) New(w http.ResponseWriter, r *http.Request) {
 }
 
 func (u *Users) Create(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprint(w, "This is a temporary response")
+	if err := r.ParseForm(); err != nil {
+		log.Fatalf("-- could not parse create users form: %v", err)
+	}
+
+	fmt.Fprintf(w, "Got email of: %v", r.PostFormValue("email"))
 }
