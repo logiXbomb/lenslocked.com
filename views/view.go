@@ -9,10 +9,12 @@ import (
 
 var (
 	LayoutDir   string = "views/layouts/"
-	TemplateExt string = "tmpl"
+	TemplateDir string = "views/"
+	TemplateExt string = ".tmpl"
 )
 
 func NewView(layout string, files ...string) *View {
+	addTemplatePath(files)
 	files = append(files, layoutFiles()...)
 
 	t, err := template.ParseFiles(files...)
@@ -51,4 +53,10 @@ func layoutFiles() []string {
 	}
 
 	return files
+}
+
+func addTemplatePath(files []string) {
+	for i, file := range files {
+		files[i] = TemplateDir + file + TemplateExt
+	}
 }
