@@ -7,21 +7,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/logiXbomb/lenslocked.com/controllers"
-	"github.com/logiXbomb/lenslocked.com/views"
 )
-
-var (
-	homeView    *views.View
-	contactView *views.View
-)
-
-func home(w http.ResponseWriter, r *http.Request) {
-	must(homeView.Render(w, nil))
-}
-
-func contact(w http.ResponseWriter, r *http.Request) {
-	must(contactView.Render(w, nil))
-}
 
 func faq(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
@@ -37,21 +23,22 @@ func notFound(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	homeView = views.NewView("bootstrap", "views/home.tmpl")
-	contactView = views.NewView("bootstrap", "views/contact.tmpl")
+	staticC := controllers.NewStatic()
 	usersC := controllers.NewUsers()
 
 	r := mux.NewRouter()
 
-	r.HandleFunc("/", home).Methods(http.MethodGet)
-	r.HandleFunc("/contact", contact).Methods(http.MethodGet)
+	r.Handle("/", staticC.HomeView).Methods(http.MethodGet)
+	r.Handle("/contact", staticC.ContactView).Methods(http.MethodGet)
 	r.HandleFunc("/signup", usersC.New).Methods(http.MethodGet)
 	r.HandleFunc("/signup", usersC.Create).Methods(http.MethodPost)
 	r.HandleFunc("/faq", faq).Methods(http.MethodGet)
 
 	r.NotFoundHandler = http.HandlerFunc(notFound)
 
-	http.ListenAndServe(":3000", r)
+	if err := http.ListenAndServe(":3000", r); err != nil {
+		log.Fatalf("-- could not listen on port: %v", err)
+	}
 }
 
 func must(err error) {
