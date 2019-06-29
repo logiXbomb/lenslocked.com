@@ -24,9 +24,25 @@ func main() {
 	}
 	defer db.Close()
 
-	err = db.Ping()
+	var id int
+	var name, email string
+	rows, err := db.Query(`
+		SELECT id, name, email
+		FROM users
+	`)
+
 	if err != nil {
-		log.Fatalf("-- could not ping database - %v", err)
+		panic(err)
+	}
+
+	defer rows.Close()
+
+	for rows.Next() {
+		err = rows.Scan(&id, &name, &email)
+		if err != nil {
+			panic(err)
+		}
+		fmt.Println(id, name, email)
 	}
 
 }
