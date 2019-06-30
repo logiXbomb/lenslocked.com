@@ -1,11 +1,11 @@
 package main
 
 import (
-	"database/sql"
 	"fmt"
 	"log"
 
-	_ "github.com/lib/pq"
+	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/postgres"
 )
 
 const (
@@ -18,31 +18,13 @@ const (
 func main() {
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s dbname=%s sslmode=disable", host, port, user, dbname)
 
-	db, err := sql.Open("postgres", psqlInfo)
+	db, err := gorm.Open("postgres", psqlInfo)
 	if err != nil {
 		log.Fatalf("-- postgres connection info is not valid: %v", err)
 	}
 	defer db.Close()
 
-	var id int
-	var name, email string
-	rows, err := db.Query(`
-		SELECT id, name, email
-		FROM users
-	`)
-
-	if err != nil {
+	if err = db.DB().Ping(); err != nil {
 		panic(err)
 	}
-
-	defer rows.Close()
-
-	for rows.Next() {
-		err = rows.Scan(&id, &name, &email)
-		if err != nil {
-			panic(err)
-		}
-		fmt.Println(id, name, email)
-	}
-
 }
