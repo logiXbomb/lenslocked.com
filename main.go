@@ -51,6 +51,7 @@ func main() {
 	r.Handle("/contact", staticC.ContactView).Methods(http.MethodGet)
 	r.HandleFunc("/signup", usersC.New).Methods(http.MethodGet)
 	r.HandleFunc("/signup", usersC.Create).Methods(http.MethodPost)
+	r.HandleFunc("/login", usersC.Login).Methods(http.MethodGet)
 	r.HandleFunc("/faq", faq).Methods(http.MethodGet)
 
 	r.NotFoundHandler = http.HandlerFunc(notFound)
